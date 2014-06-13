@@ -19,6 +19,8 @@ public class Game extends Activity {
 	private Context context;
 	private RelativeLayout rlayout;
 	private Player p;
+	private int buttonHeight;
+	private int buttonWidth;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +40,17 @@ public class Game extends Activity {
 		b.setText(String.valueOf((int)(Math.random() * 5) + 1));
 		int x = (int) (Math.random() * (rlayout.getWidth() * .8));
 		int y = (int) (Math.random() * (rlayout.getHeight() * .8));
+		int h = (int) (rlayout.getHeight() * .2);
+		int w = (int) (rlayout.getWidth() * .2);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
 		params.leftMargin = x;
-		params.topMargin = y;
-		System.out.println("position: "+x+","+y);
-		Log.d("INFO", "position: "+x+","+y);
+		params.topMargin = 100;//y;
+//TODO fix problem of calculating button width/height - the rlayout height and width is not computed until after first click!
+		buttonHeight = (int) (rlayout.getHeight() * .2);
+		buttonWidth = (int) (rlayout.getWidth() * .2);
+		tvMoney.setText(String.valueOf(buttonHeight));
+		//params.height = h;
+		//params.width = w;
 		rlayout.addView(b, params);
 		b.setOnClickListener( new View.OnClickListener() {
 			@Override
