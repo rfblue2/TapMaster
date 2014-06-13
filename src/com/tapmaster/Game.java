@@ -10,28 +10,35 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class Game extends Activity {
 
 	private Button b;
+	private TextView tvMoney;
 	private Context context;
 	private RelativeLayout rlayout;
+	private Player p;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 		context = this;
+		p = new Player("Player1");
+		rlayout = (RelativeLayout) findViewById(R.id.game_layout);
+		tvMoney = new TextView(context);
+		tvMoney.setText("0");
+		rlayout.addView(tvMoney);
 		addButton();
 	}
 	
 	public void addButton()	{
 		b = new Button(context);
-		b.setText(String.valueOf((int)Math.random() * 5 + 1));
-		rlayout = (RelativeLayout) findViewById(R.id.game_layout);
-		int x = (int) (Math.random() * (rlayout.getWidth() - 100)+50);
-		int y = (int) (Math.random() * (rlayout.getHeight() - 100)+50);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(10, 10);
+		b.setText(String.valueOf((int)(Math.random() * 5) + 1));
+		int x = (int) (Math.random() * (rlayout.getWidth() * .8));
+		int y = (int) (Math.random() * (rlayout.getHeight() * .8));
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
 		params.leftMargin = x;
 		params.topMargin = y;
 		System.out.println("position: "+x+","+y);
@@ -40,7 +47,8 @@ public class Game extends Activity {
 		b.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.d("INFO", "inclick");
+				p.addMoney(Integer.valueOf(b.getText().toString()));
+				tvMoney.setText(String.valueOf(p.getMoney()));
 				rlayout.removeView(b);
 				addButton();
 			}
