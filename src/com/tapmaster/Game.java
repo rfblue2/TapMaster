@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,8 +21,8 @@ public class Game extends Activity {
 	private Context context;
 	private RelativeLayout rlayout;
 	private Player p;
-	private int buttonHeight;
-	private int buttonWidth;
+	private int rlayoutHeight;
+	private int rlayoutWidth;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,25 +34,29 @@ public class Game extends Activity {
 		tvMoney = new TextView(context);
 		tvMoney.setText("0");
 		rlayout.addView(tvMoney);
-		addButton();
+		
+		ViewTreeObserver vto = rlayout.getViewTreeObserver(); 
+		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+		    @Override 
+		    public void onGlobalLayout() { 
+		        rlayout.getViewTreeObserver().removeOnGlobalLayoutListener(this); 
+		        rlayoutWidth  = rlayout.getMeasuredWidth();
+		        rlayoutHeight = rlayout.getMeasuredHeight(); 
+		        addButton();//initial button
+		    } 
+		});
+		
 	}
 	
 	public void addButton()	{
 		b = new Button(context);
 		b.setText(String.valueOf((int)(Math.random() * 5) + 1));
-		int x = (int) (Math.random() * (rlayout.getWidth() * .8));
-		int y = (int) (Math.random() * (rlayout.getHeight() * .8));
-		int h = (int) (rlayout.getHeight() * .2);
-		int w = (int) (rlayout.getWidth() * .2);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
+		int x = (int) (Math.random() * (rlayoutWidth * .8));
+		int y = (int) (Math.random() * (rlayoutHeight * .8));
+		int s = (int) ((rlayoutHeight * .2 + rlayoutWidth * .2) / 2);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(s, s);
 		params.leftMargin = x;
-		params.topMargin = 100;//y;
-//TODO fix problem of calculating button width/height - the rlayout height and width is not computed until after first click!
-		buttonHeight = (int) (rlayout.getHeight() * .2);
-		buttonWidth = (int) (rlayout.getWidth() * .2);
-		tvMoney.setText(String.valueOf(buttonHeight));
-		//params.height = h;
-		//params.width = w;
+		params.topMargin = y;
 		rlayout.addView(b, params);
 		b.setOnClickListener( new View.OnClickListener() {
 			@Override
