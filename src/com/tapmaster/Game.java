@@ -2,7 +2,10 @@ package com.tapmaster;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.util.Log;
 import android.view.Menu;
@@ -15,58 +18,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class Game extends Activity {
-
-	private Button b;
-	private TextView tvMoney;
-	private Context context;
-	private RelativeLayout rlayout;
-	private Player p;
-	private int rlayoutHeight;
-	private int rlayoutWidth;
+	
+	private ActionBar ab;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-		context = this;
-		p = new Player("Player1");
-		rlayout = (RelativeLayout) findViewById(R.id.game_layout);
-		tvMoney = new TextView(context);
-		tvMoney.setText("0");
-		rlayout.addView(tvMoney);
+		//Adding Tabs
+		ab = getActionBar();
+		ab.setDisplayShowTitleEnabled(false);
+		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		Tab gameTab = ab.newTab().setText("Game").setTabListener(new TabListener<GameFragment>(this, "Game", GameFragment.class));
+		ab.addTab(gameTab);
+		Tab storeTab = ab.newTab().setText("Store").setTabListener(new TabListener<StoreFragment>(this, "Store", StoreFragment.class));
+		ab.addTab(storeTab);
 		
-		ViewTreeObserver vto = rlayout.getViewTreeObserver(); 
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-		    @Override 
-		    public void onGlobalLayout() { 
-		        rlayout.getViewTreeObserver().removeOnGlobalLayoutListener(this); 
-		        rlayoutWidth  = rlayout.getMeasuredWidth();
-		        rlayoutHeight = rlayout.getMeasuredHeight(); 
-		        addButton();//initial button
-		    } 
-		});
-		
-	}
-	
-	public void addButton()	{
-		b = new Button(context);
-		b.setText(String.valueOf((int)(Math.random() * 5) + 1));
-		int x = (int) (Math.random() * (rlayoutWidth * .8));
-		int y = (int) (Math.random() * (rlayoutHeight * .8));
-		int s = (int) ((rlayoutHeight * .2 + rlayoutWidth * .2) / 2);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(s, s);
-		params.leftMargin = x;
-		params.topMargin = y;
-		rlayout.addView(b, params);
-		b.setOnClickListener( new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				p.addMoney(Integer.valueOf(b.getText().toString()));
-				tvMoney.setText(String.valueOf(p.getMoney()));
-				rlayout.removeView(b);
-				addButton();
-			}
-		});
 	}
 
 	@Override
